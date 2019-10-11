@@ -11,10 +11,10 @@ import pyvips
 
 parser = argparse.ArgumentParser(description="Slice an autotile image")
 parser.add_argument("tile", help="base name of the tile")
-parser.add_argument("size", type=int, help="tile size in pixels")
+parser.add_argument("tilewidth", type=int, help="tile width in pixels")
+parser.add_argument("tileheight", type=int, help="tile height in pixels")
 parser.add_argument("image", help="path to autotile image")
 parser.add_argument("out", help="output path")
-
 
 def main():
     args = parser.parse_args()
@@ -24,9 +24,9 @@ def main():
 
     slices = []
 
-    for y in range(0, img.height, args.size):
-        for x in range(0, img.width, args.size):
-            slices.append(img.crop(x, y, args.size, args.size))
+    for y in range(0, img.height, args.tileheight):
+        for x in range(0, img.width, args.tilewidth):
+            slices.append(img.crop(x, y, args.tilewidth, args.tileheight))
 
     parts = {
         f"{args.tile}_unconnected.png": 10,
@@ -64,7 +64,7 @@ def main():
             {
                 "id": "corner",
                 "bg": [],
-                "fg": [f"{args.tile}_corner_nw",  f"{args.tile}_corner_sw",  f"{args.tile}_corner_se", f"{args.tile}_corner_ne"]
+                "fg": [f"{args.tile}_corner_nw", f"{args.tile}_corner_sw", f"{args.tile}_corner_se", f"{args.tile}_corner_ne"]
             },
             {
                 "id": "t_connection",
@@ -90,8 +90,9 @@ def main():
     }
 
     with open(os.path.join(args.out, f"{args.tile}.json"), "w") as tile_json_file:
-        json.dump(json_content, tile_json_file, indent = 2)
+        json.dump(json_content, tile_json_file, indent=2)
         tile_json_file.write("\n")
+
 
 if __name__ == "__main__":
     main()
